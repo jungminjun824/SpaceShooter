@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 public class FollowCam : MonoBehaviour
 {
     public Transform targetTr;
-    private Transform _camTr;
+    private Transform camTr;
 
     [Range(2.0f, 20.0f)]
     public float distance = 10.0f;
@@ -13,15 +14,27 @@ public class FollowCam : MonoBehaviour
     [Range(0.0f, 10.0f)]
     public float height = 2.0f;
 
+    public float damping = 10.0f;
+    public float targetOffset = 2.0f;
+
+    private Vector3 velocity = Vector3.zero;
 
     private void Awake()
     {
-        _camTr = GetComponent<Transform>();
+        camTr = GetComponent<Transform>();
     }
 
     private void LateUpdate()
     {
-        _camTr.position = targetTr.position + (-targetTr.forward * distance) + (Vector3.up * height);
-        _camTr.LookAt(targetTr.position);
+        Vector3 pos = targetTr.position
+                    + (-targetTr.forward * distance)
+                    + (Vector3.up * height);
+
+        camTr.position = Vector3.SmoothDamp(camTr.position,
+                                            pos, 
+                                            ref velocity, 
+                                            damping);
+
+        camTr.LookAt(targetTr.position + (targetTr.up * targetOffset));
     }
 }
