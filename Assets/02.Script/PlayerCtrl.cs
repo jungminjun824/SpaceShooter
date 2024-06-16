@@ -4,20 +4,26 @@ using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
 {
+    private Transform tr;
+    private Animation anim;
+
     public float moveSpeed = 10.0f;
     public float turnSpeed = 80f;
 
-    private Animation anim;
-
-    private void Awake()
+    IEnumerator Start()
     {
+        tr = GetComponent<Transform>();
         anim = GetComponent<Animation>();
+
+        anim.Play("Idle");
+
+        turnSpeed = 0.0f;
+        yield return new WaitForSeconds(0.3f);
+        turnSpeed = 80.0f;
     }
 
-    private void Start()
-    {
-        anim.Play("Idle");
-    }
+
+
     private void Update()
     {
         float h = Input.GetAxis("Horizontal");
