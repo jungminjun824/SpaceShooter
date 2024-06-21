@@ -22,8 +22,6 @@ public class PlayerCtrl : MonoBehaviour
         turnSpeed = 80.0f;
     }
 
-
-
     private void Update()
     {
         float h = Input.GetAxis("Horizontal");
