@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
 using UnityEngine;
 
 public class PlayerCtrl : MonoBehaviour
@@ -10,8 +11,15 @@ public class PlayerCtrl : MonoBehaviour
     public float moveSpeed = 10.0f;
     public float turnSpeed = 80f;
 
+    private readonly float initHP = 100.0f;
+    public float currHP;
+
+    public delegate void PlayerDieHander();
+    public static event PlayerDieHander OnPlayerDie;
     IEnumerator Start()
     {
+        currHP = initHP;
+
         tr = GetComponent<Transform>();
         anim = GetComponent<Animation>();
 
@@ -32,9 +40,9 @@ public class PlayerCtrl : MonoBehaviour
         Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
 
         // Translate(이동 방향 + 속력 + Time.deltaTime)
-        transform.Translate(moveDir * moveSpeed * Time.deltaTime);
+        tr.Translate(moveDir * moveSpeed * Time.deltaTime);
 
-        transform.Rotate(Vector3.up * turnSpeed * Time.deltaTime * r);
+        tr.Rotate(Vector3.up * turnSpeed * Time.deltaTime * r);
 
         _PlayerAnim(h, v);
 
@@ -51,5 +59,30 @@ public class PlayerCtrl : MonoBehaviour
             anim.CrossFade("RunL", 0.25f);
         else
             anim.CrossFade("Idle", 0.25f);
+    }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        if(currHP >= 0.0f && collider.CompareTag("Punch"))
+        {
+            currHP -= 10.0f;
+            Debug.Log($"Player hp = {currHP / initHP}");
+
+            if (currHP <= 0.0f){
+                PlayerDie();
+            }
+        }
+    }
+
+    private void PlayerDie()
+    {
+        Debug.Log("Player Die !");
+        //GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
+
+        //foreach(GameObject monster in monsters)
+        //{
+        //    monster.SendMessage("OnPlayerDie", SendMessageOptions.DontRequireReceiver);
+        //}
+        OnPlayerDie();
     }
 }

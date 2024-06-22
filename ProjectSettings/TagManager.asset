@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bullet
   - Punch
+  - Monster
   layers:
   - Default
   - TransparentFX
@@ -13,8 +14,8 @@ TagManager:
   - BARREL
   - Water
   - UI
-  - 
-  - 
+  - Monster_Body
+  - Monster_Punch
   - 
   - 
   - 
